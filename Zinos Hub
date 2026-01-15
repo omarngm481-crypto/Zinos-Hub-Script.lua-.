@@ -6,8 +6,8 @@ local TweenService = game:GetService("TweenService")
 -- 1. قائمة المابات
 local MyMaps = {
     {
-        English = "Universal Script", -- تم مسح "كل مابات" من هنا
-        Arabic = "سكربت عام", -- تم مسح "كل مابات" من هنا
+        English = "Universal Script [كل مابات]", 
+        Arabic = "سكربت عام [كل مابات]", 
         Keywords = "universal speed fly noclip jump hack كل مابات", 
         Scripts = {
             {Name = "Script 1", Link = "https://rawscripts.net/raw/Universal-Script-VR7-45290"},
@@ -19,7 +19,7 @@ local MyMaps = {
     {
         English = "BROOKHAVEN", 
         Arabic = "بروخافن", 
-        Keywords = "بروخافن ماب البيوت بيوت بروك هافن", 
+        Keywords = "بروخافن ماب البيوت بيوت بروك هافن ماب بيوت", -- تم إضافة ماب بيوت هنا
         Scripts = {
             {Name = "Script 1", Link = "https://rawscripts.net/raw/Universal-Script-VR7-45290"},
             {Name = "Script 2", Link = "https://rawscripts.net/raw/Brookhaven-RP-Rael-Hub-58126"}
@@ -302,6 +302,7 @@ local function smartNormalize(txt)
     txt = txt:lower():gsub("[أإآ]", "ا"):gsub("ة", "ه"):gsub("ى", "ي"):gsub("^ال", ""):gsub("%sال", " ")
     return txt:match("^%s*(.-)%s*$")
 end
+
 SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
     local input = smartNormalize(SearchBar.Text)
     ComingSoon.Visible = (input == "")
@@ -309,7 +310,8 @@ SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
         local tags = item:FindFirstChild("Tags")
         if tags then
             local tagVal = smartNormalize(tags.Value)
-            item.Visible = (input == "" or tagVal:find(input) ~= nil)
+            -- تم تحسين البحث هنا ليتعرف على الكلمات حتى لو كانت جزءاً من النص
+            item.Visible = (input == "" or tagVal:find(input, 1, true) ~= nil)
         end
     end end
 end)
