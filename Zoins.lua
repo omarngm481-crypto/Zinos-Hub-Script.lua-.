@@ -1,1 +1,2 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Zoins1/Zinos-Hub-Script/main/Zoins_Main.lua"))()
+-- Zoins Hub Loader
+loadstring(game:HttpGet("PUT_YOUR_REAL_SCRIPT_RAW_HERE"))()
