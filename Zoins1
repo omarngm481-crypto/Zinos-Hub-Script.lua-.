@@ -1,8 +1,3 @@
--- Zoins1.lua | Loader
-
--- تحميل الملفات المساعدة
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Zoins1/Zinos-Hub-Script/main/Zoins2.lua"))()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Zoins1/Zinos-Hub-Script/main/Zoins3.lua"))()
-
--- تحميل السكربت الأصلي الكبير
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Zoins1/Zinos-Hub-Script/main/Zoins4.lua"))()
