@@ -253,7 +253,6 @@ local MapIDs = {
     ["فعاليات الرسم للعرب"] = 109425102643289
 }
 
--- تم تعديل الترتيب هنا: ماب سرقة أصبح الثاني
 local MyMaps = {
     {
         English = "All Maps كل مابات", 
@@ -270,7 +269,15 @@ local MyMaps = {
     {English = "99 Nights", Arabic = "99 ليلة", Keywords = "ليله ليلة 99ليلة 99ليله", Scripts = {{Link = "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua"}}},
     {English = "Escape Tsunami For Brainrots!", Arabic = "هروب من التسونامي", Keywords = "تسونامي تسوناني هروب من التسونامي brainrots برين روت", Scripts = {{Link = "https://raw.githubusercontent.com/gumanba/Scripts/main/EscapeTsunamiForBrainrots"}}},
     {English = "MM2", Arabic = "جريمة قتل غامضة", Keywords = "mm2 مم مم2 م م 2 ممردر", Scripts = {{Link = "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.19/yarhm.lua"}}},
-    {English = "BROOKHAVEN", Arabic = "بروخافن", Keywords = "بروخافن بيوت ماب البيوت ماب بيوت", Scripts = {{Name = "Script 1", CustomAction = LoadGoldEdition}, {Name = "Script 2", Link = "https://rawscripts.net/raw/Brookhaven-RP-Rael-Hub-58126"}}},
+    {
+        English = "BROOKHAVEN", 
+        Arabic = "بروخافن", 
+        Keywords = "بروخافن بيوت ماب البيوت ماب بيوت", 
+        Scripts = {
+            {Name = "Script 1", Link = "https://rawscripts.net/raw/Universal-Script-Rael-Hub-27610"}, 
+            {Name = "Script 2", Link = "https://rawscripts.net/raw/Brookhaven-RP-Rael-Hub-58126"}
+        }
+    },
     {English = "Blox Fruits", Arabic = "بلوكس فروتس", Keywords = "بلوكس", Scripts = {{Link = "https://raw.githubusercontent.com/REDZHUB/Blox_Fruits/main/main.lua"}}},
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
