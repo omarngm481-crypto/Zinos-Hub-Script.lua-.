@@ -1,4 +1,4 @@
--- -- [[ Zoins Hub - النسخة المصلحة بالكامل ]] --
+-- -- [[ Zoins Hub - النسخة المصلحة مع ميزة الترتيب الذكي للمابات غير المعروفة ]] --
 
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
@@ -8,7 +8,20 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
 -- ===================================
--- نظام الإشعارات المخصص (ذهبي وأسود)
+-- تقنية التحميل المسبق (إضافة فقط)
+-- ===================================
+local CachedScripts = {}
+local function PreloadScript(url)
+    if not url or url == "" then return end
+    task.spawn(function()
+        pcall(function() 
+            CachedScripts[url] = game:HttpGet(url) 
+        end)
+    end)
+end
+
+-- ===================================
+-- نظام الإشعارات المخصص
 -- ===================================
 local function ShowNotification(text)
     local NotifyGui = game:GetService("CoreGui"):FindFirstChild("ZoinsNotification")
@@ -20,7 +33,7 @@ local function ShowNotification(text)
 
     local NotifyFrame = Instance.new("Frame", NotifyGui)
     NotifyFrame.Size = UDim2.new(0, 250, 0, 60)
-    NotifyFrame.Position = UDim2.new(1, 10, 0, 20) -- تبدأ خارج الشاشة من اليمين
+    NotifyFrame.Position = UDim2.new(1, 10, 0, 20) 
     NotifyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     NotifyFrame.BorderSizePixel = 0
     
@@ -29,7 +42,7 @@ local function ShowNotification(text)
     
     local Stroke = Instance.new("UIStroke", NotifyFrame)
     Stroke.Thickness = 2
-    Stroke.Color = Color3.fromRGB(218, 165, 32) -- لون ذهبي
+    Stroke.Color = Color3.fromRGB(218, 165, 32) 
     
     local Label = Instance.new("TextLabel", NotifyFrame)
     Label.Size = UDim2.new(1, -10, 1, -10)
@@ -41,7 +54,6 @@ local function ShowNotification(text)
     Label.Font = Enum.Font.GothamBold
     Label.TextWrapped = true
 
-    -- حركة الظهور (Animation)
     NotifyFrame:TweenPosition(UDim2.new(1, -260, 0, 20), "Out", "Back", 0.5, true)
     
     task.delay(4, function()
@@ -123,8 +135,6 @@ local function LoadGoldEdition()
     MainFrameG.Position = UDim2.new(0.5, -140, 0.4, -200) 
     MainFrameG.Size = UDim2.new(0, 280, 0, 420)
     MainFrameG.Active = true
-    MainFrameG.Draggable = true
-    MainFrameG.Visible = true
 
     UICorner_Main.CornerRadius = UDim.new(0, 20)
     UICorner_Main.Parent = MainFrameG
@@ -177,7 +187,6 @@ local function LoadGoldEdition()
     MiniBtn.Size = UDim2.new(0, 60, 0, 60)
     MiniBtn.Visible = false
     MiniBtn.Active = true
-    MiniBtn.Draggable = true
     MiniCorner.CornerRadius = UDim.new(1, 0)
     MiniCorner.Parent = MiniBtn
     MiniStroke.Thickness = 2.5
@@ -194,10 +203,10 @@ local function LoadGoldEdition()
     MiniLabel.TextSize = 35
     MiniLabel.BackgroundTransparency = 1
 
-    local dragging = false
-    MiniBtn.MouseButton1Down:Connect(function() dragging = false end)
-    MiniBtn.Changed:Connect(function(prop) if prop == "Position" then dragging = true end end)
-    MiniBtn.MouseButton1Up:Connect(function() if not dragging then MainFrameG.Visible = true MiniBtn.Visible = false end end)
+    local wasDragged = MakeDraggable(MainFrameG)
+    local wasMiniDragged = MakeDraggable(MiniBtn)
+    
+    MiniBtn.MouseButton1Up:Connect(function() if not wasMiniDragged() then MainFrameG.Visible = true MiniBtn.Visible = false end end)
     CloseBtnG.MouseButton1Click:Connect(function() MainFrameG.Visible = false MiniBtn.Visible = true end)
 
     local function CreateElement(class, text)
@@ -288,8 +297,8 @@ end
 -- Main Zoins Hub Logic
 -- ===================================
 local MapIDs = {
-    ["99 Nights"] = 79546208627805,
-    ["Escape Tsunami For Brainrots!"] = 131623223084840,
+    ["99 Nights"] = 10170091386,
+    ["Escape Tsunami For Brainrots!"] = 18451336104,
     ["MM2"] = 142823291,
     ["BROOKHAVEN"] = 4924922222,
     ["Steal a Brainrot"] = 109983668079237,
@@ -309,7 +318,7 @@ local MyMaps = {
             {Name = "Smart aiming 2 / ايم بوت 2", Link = "https://raw.githubusercontent.com/Joshingtonn123/JoshScript/refs/heads/main/SyrexhubSniperOrDie"}
         }
     },
-    {English = "Steal a Brainrot", Arabic = "ماب سرقة", Keywords = "سرقة", Scripts = {{Link = "https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"}}},
+    {English = "Steal a Brainrot", Arabic = "ماب سرقة", Keywords = "سرقة سرقه brainrot", Scripts = {{Link = "https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"}}},
     {English = "99 Nights", Arabic = "99 ليلة", Keywords = "ليله ليلة 99ليلة 99ليله", Scripts = {{Link = "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua"}}},
     {English = "Escape Tsunami For Brainrots!", Arabic = "هروب من التسونامي", Keywords = "تسونامي تسوناني هروب من التسونامي brainrots برين روت", Scripts = {{Link = "https://raw.githubusercontent.com/gumanba/Scripts/main/EscapeTsunamiForBrainrots"}}},
     {English = "MM2", Arabic = "جريمة قتل غامضة", Keywords = "mm2 مم مم2 م م 2 ممردر", Scripts = {{Link = "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.19/yarhm.lua"}}},
@@ -326,10 +335,85 @@ local MyMaps = {
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
 
+-- تشغيل التحميل المسبق فوراً (إضافة فقط)
+for _, data in ipairs(MyMaps) do
+    for _, scr in ipairs(data.Scripts) do
+        if scr.Link then PreloadScript(scr.Link) end
+    end
+end
+
+-- ==========================================================
+-- [[ ميزة الذاكرة الذكية المحدثة ]] --
+-- ==========================================================
+local FileName = "ZoinsLastMap.txt"
+
+local function SaveLastMap(mapName)
+    if writefile then pcall(function() writefile(FileName, mapName) end) end
+end
+
+local function GetSavedMap()
+    if isfile and isfile(FileName) then return readfile(FileName) end
+    return nil
+end
+
 local SortedMaps = {}
-local CurrentMapData = nil
-for _, data in ipairs(MyMaps) do if MapIDs[data.English] == game.PlaceId then CurrentMapData = data else table.insert(SortedMaps, data) end end
-if CurrentMapData then table.insert(SortedMaps, 1, CurrentMapData) else SortedMaps = MyMaps end
+local CurrentPlaceId = game.PlaceId
+local SavedMapName = GetSavedMap()
+local ActiveMapData = nil
+
+local function FindCurrentMapData()
+    for _, data in ipairs(MyMaps) do
+        if MapIDs[data.English] == CurrentPlaceId then return data end
+    end
+    
+    local MarketplaceService = game:GetService("MarketplaceService")
+    local success, info = pcall(function() return MarketplaceService:GetProductInfo(game.PlaceId) end)
+    if success and info then
+        local gameName = info.Name:lower()
+        if gameName:find("99 nights") or gameName:find("99 ليلة") then
+            for _, data in ipairs(MyMaps) do if data.English == "99 Nights" then return data end end
+        elseif gameName:find("steal a brainrot") or gameName:find("سرقة") then
+            for _, data in ipairs(MyMaps) do if data.English == "Steal a Brainrot" then return data end end
+        end
+    end
+    return nil
+end
+
+ActiveMapData = FindCurrentMapData()
+local allMaps = MyMaps[1]
+
+-- المنطق الجديد للترتيب:
+if ActiveMapData then
+    -- إذا الماب معروف، نضعه أولاً
+    table.insert(SortedMaps, ActiveMapData)
+    SaveLastMap(ActiveMapData.English)
+    -- ثم نضع "All Maps" ثانياً
+    if ActiveMapData.English ~= allMaps.English then
+        table.insert(SortedMaps, allMaps)
+    end
+else
+    -- إذا الماب غير معروف، نضع "All Maps" كأول خيار
+    table.insert(SortedMaps, allMaps)
+    -- إذا كان هناك ماب مخزن سابقاً نضعه ثانياً (اختياري)
+    if SavedMapName and SavedMapName ~= allMaps.English then
+        for _, data in ipairs(MyMaps) do
+            if data.English == SavedMapName then
+                table.insert(SortedMaps, data)
+                break
+            end
+        end
+    end
+end
+
+-- إضافة باقي المابات التي لم تُضف بعد
+for _, data in ipairs(MyMaps) do
+    local alreadyAdded = false
+    for _, added in ipairs(SortedMaps) do
+        if added.English == data.English then alreadyAdded = true break end
+    end
+    if not alreadyAdded then table.insert(SortedMaps, data) end
+end
+-- ==========================================================
 
 local sgui = Instance.new("ScreenGui", game:GetService("CoreGui"))
 sgui.DisplayOrder = 10 
@@ -368,12 +452,13 @@ SearchBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25); SearchBar.TextColor3 = 
 local Scroll = Instance.new("ScrollingFrame", MainFrame)
 Scroll.Size = UDim2.new(1, -20, 1, -160); Scroll.Position = UDim2.new(0, 10, 0, 145); Scroll.BackgroundTransparency = 1; Scroll.ScrollBarThickness = 2; Scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y; Scroll.CanvasSize = UDim2.new(0,0,0,60)
 local layout = Instance.new("UIListLayout", Scroll); layout.Padding = UDim.new(0, 10)
+local UIPadding = Instance.new("UIPadding", Scroll); UIPadding.PaddingTop = UDim.new(0, 8)
 
 local OpenBtn = Instance.new("TextButton", sgui)
 OpenBtn.Size = IsMobile and UDim2.new(0, 90, 0, 90) or UDim2.new(0, 80, 0, 80); OpenBtn.Position = UDim2.new(0.9, -75, 0.5, -40); OpenBtn.BackgroundColor3 = Color3.new(0,0,0); OpenBtn.Text = "Zoins"; OpenBtn.Font = Enum.Font.GothamBlack; OpenBtn.TextSize = 18; OpenBtn.TextColor3 = Color3.new(1, 1, 1); OpenBtn.Visible = false; Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
 
-local WasDragged = MakeDraggable(OpenBtn)
-OpenBtn.MouseButton1Click:Connect(function() if not WasDragged() then MainFrame.Visible = true; OpenBtn.Visible = false end end)
+local wasBtnDragged = MakeDraggable(OpenBtn)
+OpenBtn.MouseButton1Click:Connect(function() if not wasBtnDragged() then MainFrame.Visible = true; OpenBtn.Visible = false end end)
 
 local btnStroke = Instance.new("UIStroke", OpenBtn); btnStroke.Thickness = 3; local strokeGrad = Instance.new("UIGradient", btnStroke); strokeGrad.Color = titleGrad.Color; local btnTextGrad = Instance.new("UIGradient", OpenBtn); btnTextGrad.Color = titleGrad.Color
 
@@ -395,6 +480,12 @@ function AddMap(data)
     local btn = Instance.new("TextButton", f); btn.Size = UDim2.new(0, 80, 0, 35); btn.Position = UDim2.new(1, -90, 0.5, -17); btn.Text = "Start"; btn.Font = Enum.Font.GothamBold; Instance.new("UICorner", btn)
     Instance.new("UIGradient", btn).Color = titleGrad.Color
 
+    if ActiveMapData and data.English == ActiveMapData.English then
+        f.BackgroundColor3 = Color3.fromRGB(30, 30, 20)
+        local s = Instance.new("UIStroke", f)
+        s.Color = Color3.fromRGB(218, 165, 32); s.Thickness = 1.5
+    end
+
     btn.MouseButton1Click:Connect(function()
         for _, child in pairs(SubScroll:GetChildren()) do if child:IsA("Frame") then child:Destroy() end end
         SubTitle.Text = data.English
@@ -405,11 +496,15 @@ function AddMap(data)
             local sG = Instance.new("UIGradient", sbtn); sG.Color = ColorSequence.new(Color3.fromRGB(218, 165, 32), Color3.fromRGB(255, 250, 240))
             
             sbtn.MouseButton1Click:Connect(function()
-                -- [[ استدعاء الإشعار المخصص ذهبي وأسود ]] --
                 ShowNotification("Please wait a few seconds for it to start\nانتظر ثواني حتى يشتغل")
-
                 if scr.CustomAction then scr.CustomAction()
-                else AntiLagWrap(function() loadstring(game:HttpGet(scr.Link, true))() end) end
+                else 
+                    AntiLagWrap(function() 
+                        -- تعديل بسيط فقط لاستخدام الذاكرة المخزنة
+                        local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
+                        loadstring(code)() 
+                    end) 
+                end
                 sbtn.Text = "Done ✓"; sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200))
                 task.delay(2, function() sbtn.Text = "Start"; sG.Color = ColorSequence.new(Color3.fromRGB(218, 165, 32), Color3.fromRGB(255, 250, 240)) end)
             end)
