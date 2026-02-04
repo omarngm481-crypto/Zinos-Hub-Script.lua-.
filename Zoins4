@@ -1,4 +1,4 @@
--- -- [[ Zoins Hub - النسخة المصلحة مع ميزة الترتيب الذكي للمابات غير المعروفة ]] --
+-- -- [[ Zoins Hub - النسخة المصلحة بالكامل ]] -- --
 
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
@@ -8,15 +8,14 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
 -- ===================================
--- تقنية التحميل المسبق (إضافة فقط)
+-- تقنية التحميل المسبق (محسنة)
 -- ===================================
 local CachedScripts = {}
 local function PreloadScript(url)
     if not url or url == "" then return end
     task.spawn(function()
-        pcall(function() 
-            CachedScripts[url] = game:HttpGet(url) 
-        end)
+        local success, result = pcall(function() return game:HttpGet(url) end)
+        if success then CachedScripts[url] = result end
     end)
 end
 
@@ -57,9 +56,11 @@ local function ShowNotification(text)
     NotifyFrame:TweenPosition(UDim2.new(1, -260, 0, 20), "Out", "Back", 0.5, true)
     
     task.delay(4, function()
-        NotifyFrame:TweenPosition(UDim2.new(1, 10, 0, 20), "In", "Back", 0.5, true)
-        task.wait(0.5)
-        NotifyFrame:Destroy()
+        if NotifyFrame then
+            NotifyFrame:TweenPosition(UDim2.new(1, 10, 0, 20), "In", "Back", 0.5, true)
+            task.wait(0.5)
+            NotifyFrame:Destroy()
+        end
     end)
 end
 
@@ -70,7 +71,10 @@ local function AntiLagWrap(func)
     task.spawn(function()
         RunService.Heartbeat:Wait()
         local ok, err = pcall(func)
-        if not ok then warn("Zoins Hub | Script Error:", err) end
+        if not ok then 
+            warn("Zoins Hub | Script Error:", err)
+            ShowNotification("Error loading script! تأكد من جودة الإنترنت")
+        end
         task.delay(0.2, function()
             if collectgarbage then collectgarbage("step", 200) end
         end)
@@ -146,7 +150,11 @@ local function LoadGoldEdition()
     StrokeGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 210, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(58, 123, 213))}
 
     task.spawn(function()
-        while true do StrokeGradient.Rotation = StrokeGradient.Rotation + 1 MiniGradient.Rotation = MiniGradient.Rotation + 1 task.wait(0.02) end
+        while MainFrameG and MainFrameG.Parent do 
+            StrokeGradient.Rotation = StrokeGradient.Rotation + 1 
+            MiniGradient.Rotation = MiniGradient.Rotation + 1 
+            task.wait(0.02) 
+        end
     end)
 
     CloseBtnG.Name = "CloseBtn"
@@ -277,7 +285,9 @@ local function LoadGoldEdition()
                     else bv.Velocity = Vector3.new(0, 0, 0) end
                     bg.CFrame = cam.CFrame hum.PlatformStand = true
                 end
-                bv:Destroy() bg:Destroy() hum.PlatformStand = false
+                if bv then bv:Destroy() end
+                if bg then bg:Destroy() end
+                hum.PlatformStand = false
                 for _,v in pairs(root:GetChildren()) do if v:IsA("Sound") then v.Volume = 0.5 end end
             end)
         end
@@ -335,7 +345,7 @@ local MyMaps = {
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
 
--- تشغيل التحميل المسبق فوراً (إضافة فقط)
+-- تشغيل التحميل المسبق فوراً
 for _, data in ipairs(MyMaps) do
     for _, scr in ipairs(data.Scripts) do
         if scr.Link then PreloadScript(scr.Link) end
@@ -382,37 +392,25 @@ end
 ActiveMapData = FindCurrentMapData()
 local allMaps = MyMaps[1]
 
--- المنطق الجديد للترتيب:
 if ActiveMapData then
-    -- إذا الماب معروف، نضعه أولاً
     table.insert(SortedMaps, ActiveMapData)
     SaveLastMap(ActiveMapData.English)
-    -- ثم نضع "All Maps" ثانياً
-    if ActiveMapData.English ~= allMaps.English then
-        table.insert(SortedMaps, allMaps)
-    end
+    if ActiveMapData.English ~= allMaps.English then table.insert(SortedMaps, allMaps) end
 else
-    -- إذا الماب غير معروف، نضع "All Maps" كأول خيار
     table.insert(SortedMaps, allMaps)
-    -- إذا كان هناك ماب مخزن سابقاً نضعه ثانياً (اختياري)
     if SavedMapName and SavedMapName ~= allMaps.English then
         for _, data in ipairs(MyMaps) do
-            if data.English == SavedMapName then
-                table.insert(SortedMaps, data)
-                break
-            end
+            if data.English == SavedMapName then table.insert(SortedMaps, data) break end
         end
     end
 end
 
--- إضافة باقي المابات التي لم تُضف بعد
 for _, data in ipairs(MyMaps) do
     local alreadyAdded = false
-    for _, added in ipairs(SortedMaps) do
-        if added.English == data.English then alreadyAdded = true break end
-    end
+    for _, added in ipairs(SortedMaps) do if added.English == data.English then alreadyAdded = true break end end
     if not alreadyAdded then table.insert(SortedMaps, data) end
 end
+
 -- ==========================================================
 
 local sgui = Instance.new("ScreenGui", game:GetService("CoreGui"))
@@ -500,9 +498,9 @@ function AddMap(data)
                 if scr.CustomAction then scr.CustomAction()
                 else 
                     AntiLagWrap(function() 
-                        -- تعديل بسيط فقط لاستخدام الذاكرة المخزنة
-                        local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
-                        loadstring(code)() 
+                        -- تعديل: جلب السكربت يدوياً إذا لم يكن في الذاكرة لضمان العمل 100%
+                        local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link)
+                        if code then loadstring(code)() end
                     end) 
                 end
                 sbtn.Text = "Done ✓"; sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200))
