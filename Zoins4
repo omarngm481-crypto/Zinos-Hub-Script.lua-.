@@ -1,4 +1,4 @@
--- -- [[ Zoins Hub - النسخة المصلحة مع ميزة الترتيب الذكي للمابات غير المعروفة ]] --
+-- -- [[ Zoins Hub - النسخة المصلحة مع تعديل سكربت 99 Nights ]] --
 
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
@@ -103,7 +103,6 @@ local function LoadGoldEdition()
     local UICorner_Main = Instance.new("UICorner")
     local UIStroke_Main = Instance.new("UIStroke")
     local Title = Instance.new("TextLabel")
-    local UIGradient_Title = Instance.new("UIGradient")
     local ContentFrame = Instance.new("ScrollingFrame")
     local CloseBtnG = Instance.new("TextButton")
     local MiniBtn = Instance.new("TextButton")
@@ -154,8 +153,8 @@ local function LoadGoldEdition()
     Title.Font = Enum.Font.FredokaOne
     Title.TextSize = 40
     Title.BackgroundTransparency = 1
+    local UIGradient_Title = Instance.new("UIGradient", Title)
     UIGradient_Title.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 255))}
-    UIGradient_Title.Parent = Title
 
     ContentFrame.Parent = MainFrameG
     ContentFrame.Size = UDim2.new(1, 0, 1, -80)
@@ -306,7 +305,22 @@ local MyMaps = {
         }
     },
     {English = "Steal a Brainrot", Arabic = "ماب سرقة", Keywords = "سرقة سرقه brainrot", Scripts = {{Link = "https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"}}},
-    {English = "99 Nights", Arabic = "99 ليلة", Keywords = "ليله ليلة 99ليلة 99ليله", Scripts = {{Link = "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua"}}},
+    -- [ تعديل ماب 99 Nights ليعمل بالكود الخاص بك ] --
+    {
+        English = "99 Nights", 
+        Arabic = "99 ليلة", 
+        Keywords = "ليله ليلة 99ليلة 99ليله", 
+        Scripts = {{
+            Name = "99 Nights Script",
+            CustomAction = function()
+                task.spawn(function()
+                    repeat task.wait() until game:IsLoaded()
+                    task.wait(8) -- مهم جدا لـ 99 Nights
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
+                end)
+            end
+        }}
+    },
     {English = "Escape Tsunami For Brainrots!", Arabic = "هروب من التسونامي", Keywords = "تسونامي تسوناني هروب من التسونامي brainrots برين روت", Scripts = {{Link = "https://raw.githubusercontent.com/gumanba/Scripts/main/EscapeTsunamiForBrainrots"}}},
     {English = "MM2", Arabic = "جريمة قتل غامضة", Keywords = "mm2 مم مم2 م م 2 ممردر", Scripts = {{Link = "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.19/yarhm.lua"}}},
     {
