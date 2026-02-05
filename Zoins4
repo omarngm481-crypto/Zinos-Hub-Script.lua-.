@@ -8,19 +8,6 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
 -- ===================================
--- تقنية التحميل المسبق (إضافة فقط)
--- ===================================
-local CachedScripts = {}
-local function PreloadScript(url)
-    if not url or url == "" then return end
-    task.spawn(function()
-        pcall(function() 
-            CachedScripts[url] = game:HttpGet(url) 
-        end)
-    end)
-end
-
--- ===================================
 -- نظام الإشعارات المخصص
 -- ===================================
 local function ShowNotification(text)
@@ -335,13 +322,6 @@ local MyMaps = {
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
 
--- تشغيل التحميل المسبق فوراً (إضافة فقط)
-for _, data in ipairs(MyMaps) do
-    for _, scr in ipairs(data.Scripts) do
-        if scr.Link then PreloadScript(scr.Link) end
-    end
-end
-
 -- ==========================================================
 -- [[ ميزة الذاكرة الذكية المحدثة ]] --
 -- ==========================================================
@@ -382,19 +362,14 @@ end
 ActiveMapData = FindCurrentMapData()
 local allMaps = MyMaps[1]
 
--- المنطق الجديد للترتيب:
 if ActiveMapData then
-    -- إذا الماب معروف، نضعه أولاً
     table.insert(SortedMaps, ActiveMapData)
     SaveLastMap(ActiveMapData.English)
-    -- ثم نضع "All Maps" ثانياً
     if ActiveMapData.English ~= allMaps.English then
         table.insert(SortedMaps, allMaps)
     end
 else
-    -- إذا الماب غير معروف، نضع "All Maps" كأول خيار
     table.insert(SortedMaps, allMaps)
-    -- إذا كان هناك ماب مخزن سابقاً نضعه ثانياً (اختياري)
     if SavedMapName and SavedMapName ~= allMaps.English then
         for _, data in ipairs(MyMaps) do
             if data.English == SavedMapName then
@@ -405,7 +380,6 @@ else
     end
 end
 
--- إضافة باقي المابات التي لم تُضف بعد
 for _, data in ipairs(MyMaps) do
     local alreadyAdded = false
     for _, added in ipairs(SortedMaps) do
@@ -500,8 +474,7 @@ function AddMap(data)
                 if scr.CustomAction then scr.CustomAction()
                 else 
                     AntiLagWrap(function() 
-                        -- تعديل بسيط فقط لاستخدام الذاكرة المخزنة
-                        local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
+                        local code = game:HttpGet(scr.Link, true)
                         loadstring(code)() 
                     end) 
                 end
