@@ -492,33 +492,41 @@ function AddMap(data)
             sbtn.MouseButton1Click:Connect(function()
                 ShowNotification("Please wait a few seconds for it to start\nانتظر ثواني حتى يشتغل")
 
-                -- [[ التعديل المخصص لماب 99 Nights ]] --
+                -- [[ تشغيل سكربت 99 Nights مباشرة ]]
                 if scr.Link == "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua" then
                     task.spawn(function()
+                        -- تنظيف المتغيرات القديمة لمنع أي تعارض
                         pcall(function()
                             getgenv().Loaded = nil
                             shared.Nights = nil
                             shared.VapeVoidware = nil
                         end)
-                        -- تحميل السكربت مباشرة
-                        local success, code = pcall(function() 
+
+                        -- تحميل السكربت مباشرة من الرابط
+                        local success, code = pcall(function()
                             return game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true)
                         end)
+
                         if success and code then
+                            -- تنفيذ السكربت
                             loadstring(code)()
                         else
                             ShowNotification("Failed to load 99 Nights script!")
                         end
                     end)
+
                 elseif scr.CustomAction then 
+                    -- تشغيل أي دالة مخصصة للسكربت (مثل الـ Gold Edition)
                     scr.CustomAction()
                 else 
+                    -- تشغيل أي سكربت عادي باستخدام AntiLag
                     AntiLagWrap(function() 
                         local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
                         loadstring(code)() 
                     end) 
                 end
-                
+
+                -- تغيير حالة الزر مؤقتًا للتأكيد
                 sbtn.Text = "Done ✓"
                 local currentSG = sbtn:FindFirstChildOfClass("UIGradient")
                 if currentSG then currentSG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200)) end
