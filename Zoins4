@@ -1,4 +1,4 @@
--- -- [[ Zoins Hub - النسخة المعدلة كلياً ]] --
+-- -- [[ Zoins Hub - النسخة المصلحة والنهائية ]] --
 
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
@@ -297,7 +297,6 @@ end
 -- Main Zoins Hub Logic
 -- ===================================
 local MapIDs = {
-    ["99 Nights"] = 10170091386,
     ["Escape Tsunami For Brainrots!"] = 18451336104,
     ["MM2"] = 142823291,
     ["BROOKHAVEN"] = 4924922222,
@@ -319,7 +318,6 @@ local MyMaps = {
         }
     },
     {English = "Steal a Brainrot", Arabic = "ماب سرقة", Keywords = "سرقة سرقه brainrot", Scripts = {{Link = "https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"}}},
-    {English = "99 Nights", Arabic = "99 ليلة", Keywords = "ليله ليلة 99ليلة 99ليله", Scripts = {{Link = "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua"}}},
     {English = "Escape Tsunami For Brainrots!", Arabic = "هروب من التسونامي", Keywords = "تسونامي تسوناني هروب من التسونامي brainrots برين روت", Scripts = {{Link = "https://raw.githubusercontent.com/gumanba/Scripts/main/EscapeTsunamiForBrainrots"}}},
     {English = "MM2", Arabic = "جريمة قتل غامضة", Keywords = "mm2 مم مم2 م م 2 ممردر", Scripts = {{Link = "https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/source/yarhm/1.19/yarhm.lua"}}},
     {
@@ -335,10 +333,10 @@ local MyMaps = {
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
 
--- [[ 1️⃣ تعديل كود التحميل المسبق ]]
+-- تشغيل التحميل المسبق
 for _, data in ipairs(MyMaps) do
     for _, scr in ipairs(data.Scripts) do
-        if scr.Link and scr.Link ~= "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua" then
+        if scr.Link then
             PreloadScript(scr.Link)
         end
     end
@@ -372,9 +370,7 @@ local function FindCurrentMapData()
     local success, info = pcall(function() return MarketplaceService:GetProductInfo(game.PlaceId) end)
     if success and info then
         local gameName = info.Name:lower()
-        if gameName:find("99 nights") or gameName:find("99 ليلة") then
-            for _, data in ipairs(MyMaps) do if data.English == "99 Nights" then return data end end
-        elseif gameName:find("steal a brainrot") or gameName:find("سرقة") then
+        if gameName:find("steal a brainrot") or gameName:find("سرقة") then
             for _, data in ipairs(MyMaps) do if data.English == "Steal a Brainrot" then return data end end
         end
     end
@@ -494,46 +490,18 @@ function AddMap(data)
             
             sbtn.MouseButton1Click:Connect(function()
                 ShowNotification("Please wait a few seconds for it to start\nانتظر ثواني حتى يشتغل")
-
-                -- [[ 2️⃣ تعديل زر Start لسكربت 99 Nights ]]
-                if scr.Link == "https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua" then
-                    task.spawn(function()
-                        pcall(function()
-                            getgenv().Loaded = nil
-                            shared.Nights = nil
-                            shared.VapeVoidware = nil
-                        end)
-
-                        loadstring(game:HttpGet(scr.Link, true))()
-                    end)
-                    
-                    -- تحديث شكل الزر عند الضغط
-                    sbtn.Text = "Done ✓"
-                    if sG then sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200)) end
-                    task.delay(2, function()
-                        sbtn.Text = "Start"
-                        if sG then sG.Color = ColorSequence.new(Color3.fromRGB(218, 165, 32), Color3.fromRGB(255, 250, 240)) end
-                    end)
-                    return
-                end
-
-                if scr.CustomAction then
+                
+                if scr.CustomAction then 
                     scr.CustomAction()
-                else
-                    -- [[ 3️⃣ باقي السكربتات تستخدم التحميل المسبق ]]
-                    AntiLagWrap(function()
+                else 
+                    AntiLagWrap(function() 
                         local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
-                        loadstring(code)()
-                    end)
+                        loadstring(code)() 
+                    end) 
                 end
 
-                -- تحديث حالة الزر مؤقتًا للبقية
-                sbtn.Text = "Done ✓"
-                if sG then sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200)) end
-                task.delay(2, function()
-                    sbtn.Text = "Start"
-                    if sG then sG.Color = ColorSequence.new(Color3.fromRGB(218, 165, 32), Color3.fromRGB(255, 250, 240)) end
-                end)
+                sbtn.Text = "Done ✓"; sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200))
+                task.delay(2, function() sbtn.Text = "Start"; sG.Color = ColorSequence.new(Color3.fromRGB(218, 165, 32), Color3.fromRGB(255, 250, 240)) end)
             end)
         end
         SubFrame.Visible = true
