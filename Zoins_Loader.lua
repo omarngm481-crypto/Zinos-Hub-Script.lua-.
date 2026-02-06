@@ -109,9 +109,9 @@ bit32.arshift = function(x, s_amount)
 			add = P - (2 ^ (N - s_amount));
 		end
 		return math.floor(x * (2 ^ -s_amount)) + add;
-	else
+	else 
 		return (x * (2 ^ -s_amount)) % P;
-	end
+	end 
 end;
 local TABLE_TableIndirection = {};
 TABLE_TableIndirection["obf_stringchar%0"] = string.char;
