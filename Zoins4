@@ -1,4 +1,4 @@
--- -- [[ Zoins Hub - النسخة المصلحة والنهائية ]] --
+-- -- [[ Zoins Hub - النسخة المصلحة والنهائية - تشغيل مباشر ]] --
 
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
@@ -6,19 +6,6 @@ local IsMobile = UIS.TouchEnabled and not UIS.KeyboardEnabled
 local IsPC = UIS.KeyboardEnabled and UIS.MouseEnabled
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
-
--- ===================================
--- تقنية التحميل المسبق
--- ===================================
-local CachedScripts = {}
-local function PreloadScript(url)
-    if not url or url == "" then return end
-    task.spawn(function()
-        pcall(function() 
-            CachedScripts[url] = game:HttpGet(url) 
-        end)
-    end)
-end
 
 -- ===================================
 -- نظام الإشعارات المخصص
@@ -333,15 +320,6 @@ local MyMaps = {
     {English = "فعاليات الرسم للعرب", Arabic = "فعاليات الرسم للعرب", Keywords = "رسم", Scripts = {{Link = "https://rawscripts.net/raw/Universal-Script-HD-copying-LOSKY-59113"}}}
 }
 
--- تشغيل التحميل المسبق
-for _, data in ipairs(MyMaps) do
-    for _, scr in ipairs(data.Scripts) do
-        if scr.Link then
-            PreloadScript(scr.Link)
-        end
-    end
-end
-
 -- ==========================================================
 -- [[ ميزة الذاكرة الذكية المحدثة ]] --
 -- ==========================================================
@@ -384,7 +362,6 @@ end
 ActiveMapData = FindCurrentMapData()
 local allMaps = MyMaps[1]
 
--- ترتيب القائمة (بدون رسائل إشعار)
 if ActiveMapData then
     table.insert(SortedMaps, ActiveMapData)
     SaveLastMap(ActiveMapData.English)
@@ -499,10 +476,15 @@ function AddMap(data)
                 if scr.CustomAction then 
                     scr.CustomAction()
                 else 
-                    AntiLagWrap(function() 
-                        local code = CachedScripts[scr.Link] or game:HttpGet(scr.Link, true)
-                        loadstring(code)() 
-                    end) 
+                    -- [[ التعديل الجديد: تشغيل مباشر ومنفصل بدون تأخير ]] --
+                    task.spawn(function()
+                        local success, code = pcall(game.HttpGet, game, scr.Link, true)
+                        if success then
+                            loadstring(code)()
+                        else
+                            warn("Zoins Hub | Failed to fetch: " .. tostring(scr.Link))
+                        end
+                    end)
                 end
 
                 sbtn.Text = "Done ✓"; sG.Color = ColorSequence.new(Color3.fromRGB(50, 255, 50), Color3.fromRGB(200, 255, 200))
