@@ -9,7 +9,6 @@ local RunService = game:GetService("RunService")
 
 -- ===================================
 -- ميزة تزييف السلاسة (Visual Smoothness Spoofing)
--- تجعل اللعب يبدو ناعماً حتى عند وجود لاق خفيف دون تقليل الدقة
 -- ===================================
 task.spawn(function()
     local Camera = workspace.CurrentCamera
@@ -359,6 +358,12 @@ local SavedMapName = GetSavedMap()
 local ActiveMapData = nil
 
 local function FindCurrentMapData()
+    -- 1. التحقق من معرف الـ Universe (لحل مشكلة بلوكس فروت في كل العوالم)
+    if game.GameId == 444163659 then
+        for _, data in ipairs(MyMaps) do if data.English == "Blox Fruits" then return data end end
+    end
+
+    -- 2. التحقق العادي من IDs المابات الأخرى
     for _, data in ipairs(MyMaps) do
         if MapIDs[data.English] == CurrentPlaceId then return data end
     end
@@ -381,6 +386,8 @@ local function FindCurrentMapData()
              for _, data in ipairs(MyMaps) do if data.English == "99 Nights" then return data end end
         elseif gameName:find("rivals") or gameName:find("رايفلز") then
              for _, data in ipairs(MyMaps) do if data.English == "RIVALS" then return data end end
+        elseif gameName:find("blox fruits") then
+             for _, data in ipairs(MyMaps) do if data.English == "Blox Fruits" then return data end end
         end
     end
     return nil
