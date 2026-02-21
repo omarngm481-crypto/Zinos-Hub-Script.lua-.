@@ -1,72 +1,3 @@
--- ==========================================================
--- 1. نظام المقدمة (Intro System)
--- ==========================================================
-local TweenService = game:GetService("TweenService")
-local Lighting = game:GetService("Lighting")
-
-local function PlayIntro(onFinished)
-    local IntroGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-    IntroGui.DisplayOrder = 3000
-    
-    local Blur = Instance.new("BlurEffect", Lighting)
-    Blur.Size = 0
-    TweenService:Create(Blur, TweenInfo.new(1.2), {Size = 25}):Play()
-
-    local MainContainer = Instance.new("Frame", IntroGui)
-    MainContainer.Size = UDim2.new(1, 0, 1, 0)
-    MainContainer.BackgroundTransparency = 1
-
-    local function CreateText(text)
-        local label = Instance.new("TextLabel", MainContainer)
-        label.Size = UDim2.new(1, 0, 1, 0)
-        label.BackgroundTransparency = 1
-        label.Text = text
-        label.TextColor3 = Color3.fromRGB(255, 215, 0) -- لون ذهبي
-        label.Font = Enum.Font.FredokaOne
-        label.TextSize = 60
-        label.TextTransparency = 1
-        local stroke = Instance.new("UIStroke", label)
-        stroke.Thickness = 3
-        stroke.Transparency = 1
-        return label, stroke
-    end
-
-    -- عرض النص الأول: Zoins Hub
-    local HubLabel, HubStroke = CreateText("Zoins Hub")
-    TweenService:Create(HubLabel, TweenInfo.new(1), {TextTransparency = 0}):Play()
-    TweenService:Create(HubStroke, TweenInfo.new(1), {Transparency = 0.4}):Play()
-    task.wait(2.2)
-    TweenService:Create(HubLabel, TweenInfo.new(0.8), {TextTransparency = 1}):Play()
-    TweenService:Create(HubStroke, TweenInfo.new(0.8), {Transparency = 1}):Play()
-    task.wait(0.8)
-
-    HubLabel:Destroy()
-
-    -- عرض النص الثاني: Ramadan event
-    local EventLabel, EventStroke = CreateText("Ramadan event")
-    TweenService:Create(EventLabel, TweenInfo.new(1), {TextTransparency = 0}):Play()
-    TweenService:Create(EventStroke, TweenInfo.new(1), {Transparency = 0.4}):Play()
-    task.wait(2.2)
-    
-    TweenService:Create(EventLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
-    TweenService:Create(EventStroke, TweenInfo.new(1), {Transparency = 1}):Play()
-    
-    local blurOut = TweenService:Create(Blur, TweenInfo.new(1.2), {Size = 0})
-    blurOut:Play()
-    
-    blurOut.Completed:Connect(function()
-        Blur:Destroy()
-        IntroGui:Destroy()
-        if onFinished then onFinished() end
-    end)
-end
-
--- ==========================================================
--- 2. تشغيل السكربت الأصلي بعد انتهاء المقدمة
--- ==========================================================
-
-PlayIntro(function()
-
 local UserInputService = game:GetService("UserInputService")
 local UIS = UserInputService
 local IsMobile = UIS.TouchEnabled and not UIS.KeyboardEnabled
@@ -656,5 +587,3 @@ SearchBar:GetPropertyChangedSignal("Text"):Connect(function()
 end)
 
 ShowNotification("رمضان مبارك / Ramadan Mubarak")
-
-end)
